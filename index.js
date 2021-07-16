@@ -10,6 +10,14 @@ function ArtilleryLambdaPlugin(script, events) {
 
   self.config = script.config.plugins['lambda'];
 
+  if (!self.config.function) {
+    throw new Error('function is missing');
+  }
+
+  if (!self.config.region) {
+    throw new Error('region is missing');
+  }
+
   self.lambdaClient = function() {
     return new LambdaClient({ region: self.config.region })
   }
@@ -19,14 +27,6 @@ function ArtilleryLambdaPlugin(script, events) {
       FunctionName: self.config.function,
       Payload: new TextEncoder().encode(JSON.stringify(report)),
     });
-  }
-
-  if (!self.config.function) {
-    throw new Error('function is missing');
-  }
-
-  if (!self.config.region) {
-    throw new Error('region is missing');
   }
 
   events.on('done', function(report) {
